@@ -8,7 +8,9 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 
 public class mainPanel extends javax.swing.JFrame {
@@ -76,13 +78,12 @@ public class mainPanel extends javax.swing.JFrame {
         scourse_text = new javax.swing.JTextField();
         edit_btn = new javax.swing.JButton();
         del_btn = new javax.swing.JButton();
+        clear_btn = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        search_btn = new javax.swing.JButton();
         student_id = new javax.swing.JTextField();
-        refresh_btn = new javax.swing.JButton();
         export_btn = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -122,6 +123,13 @@ public class mainPanel extends javax.swing.JFrame {
             }
         });
 
+        clear_btn.setText("CLEAR");
+        clear_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clear_btnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -146,6 +154,8 @@ public class mainPanel extends javax.swing.JFrame {
                         .addContainerGap())))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(clear_btn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(edit_btn)
                 .addGap(18, 18, 18)
                 .addComponent(del_btn)
@@ -154,9 +164,8 @@ public class mainPanel extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(sname_text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -171,7 +180,8 @@ public class mainPanel extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(edit_btn)
-                    .addComponent(del_btn))
+                    .addComponent(del_btn)
+                    .addComponent(clear_btn))
                 .addContainerGap())
         );
 
@@ -221,23 +231,9 @@ public class mainPanel extends javax.swing.JFrame {
 
         jLabel1.setText("Search:");
 
-        search_btn.setText("Search");
-        search_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                search_btnActionPerformed(evt);
-            }
-        });
-
         student_id.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                student_idKeyPressed(evt);
-            }
-        });
-
-        refresh_btn.setText("Refresh");
-        refresh_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refresh_btnActionPerformed(evt);
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                student_idKeyReleased(evt);
             }
         });
 
@@ -285,21 +281,10 @@ public class mainPanel extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(18, 49, Short.MAX_VALUE)
-                                        .addComponent(search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(129, 129, 129))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(18, 18, 18)
-                                        .addComponent(student_id, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(refresh_btn))))
+                        .addComponent(student_id, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 11, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -310,22 +295,12 @@ public class mainPanel extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(61, 61, 61)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(student_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(search_btn))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(refresh_btn)))))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(student_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -346,27 +321,6 @@ public class mainPanel extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
-
-    private void search_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_search_btnActionPerformed
-
-        try {
-            String searchValue = student_id.getText();
-            
-            ps = conn.prepareStatement("SELECT * FROM tbl_student WHERE student_id = '"+searchValue+"'");
-            res = ps.executeQuery();
-            
-            if(res.next() == true){
-                sname_text.setText(res.getString(2));
-                snumber_text.setText(res.getString(1));
-                scourse_text.setText(res.getString(3));
-            }
-            else{
-                JOptionPane.showMessageDialog(this, "No Record Found");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_search_btnActionPerformed
 
     private void edit_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_btnActionPerformed
        
@@ -417,11 +371,6 @@ public class mainPanel extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_del_btnActionPerformed
 
-    private void refresh_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refresh_btnActionPerformed
-        // TODO add your handling code here:
-        FetchData();
-    }//GEN-LAST:event_refresh_btnActionPerformed
-
     private void export_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_export_btnActionPerformed
         String file = "/Users/nyok/Documents/ExportedFile.csv";
         
@@ -448,31 +397,6 @@ public class mainPanel extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_export_btnActionPerformed
 
-    private void student_idKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_student_idKeyPressed
-        // TODO add your handling code here:
-        if(evt.getKeyCode()== KeyEvent.VK_ENTER){
-            try {
-            String searchValue = student_id.getText();
-            
-            ps = conn.prepareStatement("SELECT * FROM tbl_student WHERE student_id = '"+searchValue+"'");
-            res = ps.executeQuery();
-            
-            if(res.next() == true){
-                sname_text.setText(res.getString(2));
-                snumber_text.setText(res.getString(1));
-                scourse_text.setText(res.getString(3));
-            }
-            else{
-                JOptionPane.showMessageDialog(this, "No Record Found");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        }else{
-            
-        }
-    }//GEN-LAST:event_student_idKeyPressed
-
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         
         DefaultTableModel tbl_model = (DefaultTableModel)jTable1.getModel();
@@ -482,6 +406,22 @@ public class mainPanel extends javax.swing.JFrame {
         snumber_text.setText(tbl_model.getValueAt(selectedRow,0).toString());
         scourse_text.setText(tbl_model.getValueAt(selectedRow,2).toString());
     }//GEN-LAST:event_jTable1MouseClicked
+
+    private void student_idKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_student_idKeyReleased
+        
+        DefaultTableModel mod = (DefaultTableModel)jTable1.getModel();
+        TableRowSorter<DefaultTableModel> obj = new TableRowSorter<>(mod);
+        jTable1.setRowSorter(obj);
+        obj.setRowFilter(RowFilter.regexFilter(student_id.getText()));
+    }//GEN-LAST:event_student_idKeyReleased
+
+    private void clear_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clear_btnActionPerformed
+        // TODO add your handling code here:
+        sname_text.setText("");
+        snumber_text.setText("");
+        scourse_text.setText("");
+        student_id.setText("");
+    }//GEN-LAST:event_clear_btnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -519,6 +459,7 @@ public class mainPanel extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton clear_btn;
     private javax.swing.JButton del_btn;
     private javax.swing.JButton edit_btn;
     private javax.swing.JButton export_btn;
@@ -538,9 +479,7 @@ public class mainPanel extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JButton refresh_btn;
     private javax.swing.JTextField scourse_text;
-    private javax.swing.JButton search_btn;
     private javax.swing.JTextField sname_text;
     private javax.swing.JTextField snumber_text;
     private javax.swing.JTextField student_id;

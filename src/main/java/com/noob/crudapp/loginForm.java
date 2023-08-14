@@ -1,4 +1,5 @@
 package com.noob.crudapp;
+import com.sun.glass.events.KeyEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -35,6 +36,12 @@ public class loginForm extends javax.swing.JFrame {
         user_label.setText("Username:");
 
         pass_label.setText("Password:");
+
+        password_text.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                password_textKeyPressed(evt);
+            }
+        });
 
         login_btn.setText("Login");
         login_btn.addActionListener(new java.awt.event.ActionListener() {
@@ -124,8 +131,40 @@ public class loginForm extends javax.swing.JFrame {
     }//GEN-LAST:event_login_btnActionPerformed
 
     private void cancel_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancel_btnActionPerformed
-        this.dispose();
+        System.exit(0);
     }//GEN-LAST:event_cancel_btnActionPerformed
+
+    private void password_textKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_password_textKeyPressed
+        // TODO add your handling code here:
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+            String uname = user_text.getText();
+            String pass = password_text.getText();
+
+            try{
+                Class.forName("org.postgresql.Driver");
+                Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Java_DB", "postgres", "stinggreen");
+                String sql_query = "SELECT * FROM tbl_user WHERE username = '"+uname+"' AND user_password = '"+pass+"'";
+                PreparedStatement ps = conn.prepareStatement(sql_query);
+                ResultSet res = ps.executeQuery();
+
+                if(!res.next()){
+                    JOptionPane.showMessageDialog(null, "Invalid credentials!");
+                    user_text.setText("");
+                    password_text.setText("");
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Login Successful");
+                    this.dispose();
+                    new mainPanel().show();
+                }
+            }
+            catch (Exception ex){
+                JOptionPane.showMessageDialog(null, ex);
+            }
+        }else{
+            
+        }
+    }//GEN-LAST:event_password_textKeyPressed
 
     /**
      * @param args the command line arguments

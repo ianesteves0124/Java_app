@@ -43,6 +43,8 @@ public class add_Student extends javax.swing.JFrame {
         }
     }
     
+    
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -146,6 +148,7 @@ public class add_Student extends javax.swing.JFrame {
             if(ps.executeUpdate() == 1){
                 JOptionPane.showMessageDialog(this, "Record Added");
                 add_studtext.setText("");
+                Load_crs();
             }else{
                 JOptionPane.showMessageDialog(this, "Invalid details");
             }

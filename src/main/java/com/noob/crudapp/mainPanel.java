@@ -1,9 +1,14 @@
 package com.noob.crudapp;
 
+import java.awt.event.KeyEvent;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 
 public class mainPanel extends javax.swing.JFrame {
@@ -11,7 +16,7 @@ public class mainPanel extends javax.swing.JFrame {
     public mainPanel() {
         initComponents();
         Connect();
-        Load_sID();
+        FetchData();
     }
     
     Connection conn;
@@ -28,24 +33,34 @@ public class mainPanel extends javax.swing.JFrame {
             Logger.getLogger(add_Student.class.getName()).log(Level.SEVERE, null, ex);
         }   
     }
-    
-    public final void Load_sID(){
-        
-//        try {
-//            ps = conn.prepareCall("SELECT student_id FROM tbl_student");
-//            res = ps.executeQuery();
-//            student_id.removeAll();
-//            
-////            while(res.next()){
-////                student_id.addItem(res.getString(1));
-////            }
-//        } catch (SQLException ex) {
-//            Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        
-    }
 
-   
+   public void FetchData(){
+        try {
+            int x;
+            ps = conn.prepareStatement("SELECT * FROM tbl_student ORDER BY student_id ASC");
+            res = ps.executeQuery();
+            ResultSetMetaData  rsmd = res.getMetaData();
+            x = rsmd.getColumnCount();
+            
+            DefaultTableModel def = (DefaultTableModel)jTable1.getModel();
+            def.setRowCount(0);
+            
+            while(res.next()){
+                Vector vec = new Vector();
+                for(int y = 1; y<=x; y++){
+                    vec.add(res.getString("student_id"));
+                    vec.add(res.getString("student_name"));
+                    vec.add(res.getString("student_course"));
+                }
+                def.addRow(vec);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+   }
+    
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -67,6 +82,8 @@ public class mainPanel extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         search_btn = new javax.swing.JButton();
         student_id = new javax.swing.JTextField();
+        refresh_btn = new javax.swing.JButton();
+        export_btn = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -99,6 +116,11 @@ public class mainPanel extends javax.swing.JFrame {
         });
 
         del_btn.setText("DELETE");
+        del_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                del_btnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -163,8 +185,26 @@ public class mainPanel extends javax.swing.JFrame {
             new String [] {
                 "Student No.", "Student Name", "Course"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(0).setResizable(false);
+            jTable1.getColumnModel().getColumn(1).setResizable(false);
+            jTable1.getColumnModel().getColumn(2).setResizable(false);
+        }
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -174,7 +214,9 @@ public class mainPanel extends javax.swing.JFrame {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jLabel1.setText("Search:");
@@ -183,6 +225,26 @@ public class mainPanel extends javax.swing.JFrame {
         search_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 search_btnActionPerformed(evt);
+            }
+        });
+
+        student_id.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                student_idKeyPressed(evt);
+            }
+        });
+
+        refresh_btn.setText("Refresh");
+        refresh_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refresh_btnActionPerformed(evt);
+            }
+        });
+
+        export_btn.setText("Export");
+        export_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                export_btnActionPerformed(evt);
             }
         });
 
@@ -218,29 +280,37 @@ public class mainPanel extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel1)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 66, Short.MAX_VALUE)
-                        .addComponent(search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(129, 129, 129))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(student_id, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(17, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(18, 49, Short.MAX_VALUE)
+                                        .addComponent(search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(129, 129, 129))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(18, 18, 18)
+                                        .addComponent(student_id, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(refresh_btn))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 11, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(export_btn)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(17, 17, 17))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -249,11 +319,18 @@ public class mainPanel extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
                             .addComponent(student_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(search_btn)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(search_btn))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(refresh_btn)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(16, 16, 16))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(export_btn)
+                .addContainerGap())
         );
 
         pack();
@@ -282,7 +359,8 @@ public class mainPanel extends javax.swing.JFrame {
                 sname_text.setText(res.getString(2));
                 snumber_text.setText(res.getString(1));
                 scourse_text.setText(res.getString(3));
-            }else{
+            }
+            else{
                 JOptionPane.showMessageDialog(this, "No Record Found");
             }
         } catch (SQLException ex) {
@@ -294,11 +372,10 @@ public class mainPanel extends javax.swing.JFrame {
        
         try {
             String s_ID = snumber_text.getText().toString();
-            String s_charname = sname_text.getText();
             ps = conn.prepareStatement("SELECT * FROM tbl_student WHERE student_id = '"+s_ID+"'");
             res = ps.executeQuery();
             
-                if(res.next()){
+            if(res.next()){
                     String number = res.getString(1);
                     String name = res.getString(2);
                     String course = res.getString(3);
@@ -308,6 +385,7 @@ public class mainPanel extends javax.swing.JFrame {
 
                 dlg.setLocationRelativeTo(null);
                 dlg.setVisible(true);
+                FetchData();
 
             }
             else {
@@ -317,6 +395,93 @@ public class mainPanel extends javax.swing.JFrame {
             Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_edit_btnActionPerformed
+
+    private void del_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_del_btnActionPerformed
+        
+        try {
+            String del_student = snumber_text.getText().toString();
+            ps = conn.prepareStatement("DELETE FROM tbl_student WHERE student_id = '"+del_student+"'");
+            
+            if(ps.executeUpdate() == 1){
+                JOptionPane.showMessageDialog(this, "Successfully Deleted");
+                sname_text.setText("");
+                snumber_text.setText("");
+                scourse_text.setText("");
+                FetchData();
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "No record to delete");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_del_btnActionPerformed
+
+    private void refresh_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refresh_btnActionPerformed
+        // TODO add your handling code here:
+        FetchData();
+    }//GEN-LAST:event_refresh_btnActionPerformed
+
+    private void export_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_export_btnActionPerformed
+        String file = "/Users/nyok/Documents/ExportedFile.csv";
+        
+        try {
+            FileWriter fw = new FileWriter(file);
+            ps = conn.prepareStatement("SELECT * FROM tbl_student ORDER BY student_id ASC");
+            res = ps.executeQuery();
+            
+            while(res.next()){
+                fw.append(res.getString(1));
+                fw.append(",");
+                fw.append(res.getString(2));
+                fw.append(",");
+                fw.append(res.getString(3));
+                fw.append("\n");
+            }
+            JOptionPane.showMessageDialog(this, "File Exported Successfully");
+            fw.flush();
+            fw.close();
+        } catch (IOException ex) {
+            Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_export_btnActionPerformed
+
+    private void student_idKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_student_idKeyPressed
+        // TODO add your handling code here:
+        if(evt.getKeyCode()== KeyEvent.VK_ENTER){
+            try {
+            String searchValue = student_id.getText();
+            
+            ps = conn.prepareStatement("SELECT * FROM tbl_student WHERE student_id = '"+searchValue+"'");
+            res = ps.executeQuery();
+            
+            if(res.next() == true){
+                sname_text.setText(res.getString(2));
+                snumber_text.setText(res.getString(1));
+                scourse_text.setText(res.getString(3));
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "No Record Found");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        }else{
+            
+        }
+    }//GEN-LAST:event_student_idKeyPressed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        
+        DefaultTableModel tbl_model = (DefaultTableModel)jTable1.getModel();
+        int selectedRow = jTable1.getSelectedRow();
+        
+        sname_text.setText(tbl_model.getValueAt(selectedRow,1).toString());
+        snumber_text.setText(tbl_model.getValueAt(selectedRow,0).toString());
+        scourse_text.setText(tbl_model.getValueAt(selectedRow,2).toString());
+    }//GEN-LAST:event_jTable1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -356,6 +521,7 @@ public class mainPanel extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton del_btn;
     private javax.swing.JButton edit_btn;
+    private javax.swing.JButton export_btn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -372,6 +538,7 @@ public class mainPanel extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JButton refresh_btn;
     private javax.swing.JTextField scourse_text;
     private javax.swing.JButton search_btn;
     private javax.swing.JTextField sname_text;

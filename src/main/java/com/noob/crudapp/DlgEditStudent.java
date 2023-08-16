@@ -168,6 +168,7 @@ public class DlgEditStudent extends javax.swing.JDialog {
             
             if(ps.executeUpdate() == 1){
                 JOptionPane.showMessageDialog(this, "Update Successfully!");
+                this.dispose();
             }
             else{
                 JOptionPane.showMessageDialog(this, "Invalid Details!");

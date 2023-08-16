@@ -41,26 +41,26 @@ public class mainPanel extends javax.swing.JFrame {
             int x;
             ps = conn.prepareStatement("SELECT * FROM tbl_student ORDER BY student_id ASC");
             res = ps.executeQuery();
-            ResultSetMetaData  rsmd = res.getMetaData();
-            x = rsmd.getColumnCount();
             
-            DefaultTableModel def = (DefaultTableModel)jTable1.getModel();
-            def.setRowCount(0);
+            DefaultTableModel model =(DefaultTableModel)jTable1.getModel();
+            model.setRowCount(0);
             
             while(res.next()){
-                Vector vec = new Vector();
-                for(int y = 1; y<=x; y++){
-                    vec.add(res.getString("student_id"));
-                    vec.add(res.getString("student_name"));
-                    vec.add(res.getString("student_course"));
-                }
-                def.addRow(vec);
+                model.addRow(new String[] {res.getString(1),res.getString(2),res.getString(3)});
             }
+            
         } catch (SQLException ex) {
             Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
        
    }
+   
+    public void ClearFields(){
+         search_bar.setText(null);
+         sname_text.setText(null);
+         snumber_text.setText(null);
+         scourse_text.setText(null);
+    }
     
     
     @SuppressWarnings("unchecked")
@@ -83,7 +83,7 @@ public class mainPanel extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        student_id = new javax.swing.JTextField();
+        search_bar = new javax.swing.JTextField();
         export_btn = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -155,7 +155,7 @@ public class mainPanel extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(clear_btn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(edit_btn)
                 .addGap(18, 18, 18)
                 .addComponent(del_btn)
@@ -231,9 +231,9 @@ public class mainPanel extends javax.swing.JFrame {
 
         jLabel1.setText("Search:");
 
-        student_id.addKeyListener(new java.awt.event.KeyAdapter() {
+        search_bar.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                student_idKeyReleased(evt);
+                search_barKeyReleased(evt);
             }
         });
 
@@ -280,16 +280,16 @@ public class mainPanel extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 16, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(export_btn)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(student_id, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 11, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(export_btn)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(search_bar, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(17, 17, 17))
         );
         layout.setVerticalGroup(
@@ -299,7 +299,7 @@ public class mainPanel extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel1)
-                        .addComponent(student_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(search_bar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -326,7 +326,7 @@ public class mainPanel extends javax.swing.JFrame {
        
         try {
             String s_ID = snumber_text.getText().toString();
-            ps = conn.prepareStatement("SELECT * FROM tbl_student WHERE student_id = '"+s_ID+"'");
+            ps = conn.prepareStatement("SELECT * FROM tbl_student WHERE student_id = '"+s_ID+"'");// 
             res = ps.executeQuery();
             
             if(res.next()){
@@ -339,15 +339,12 @@ public class mainPanel extends javax.swing.JFrame {
 
                 dlg.setLocationRelativeTo(null);
                 dlg.setVisible(true);
-                FetchData();
-
-            }
-            else {
-            JOptionPane.showMessageDialog(this, "Input details first");
             }
         } catch (SQLException ex) {
-            Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "No selected record!");
         }
+        FetchData();
     }//GEN-LAST:event_edit_btnActionPerformed
 
     private void del_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_del_btnActionPerformed
@@ -358,17 +355,13 @@ public class mainPanel extends javax.swing.JFrame {
             
             if(ps.executeUpdate() == 1){
                 JOptionPane.showMessageDialog(this, "Successfully Deleted");
-                sname_text.setText("");
-                snumber_text.setText("");
-                scourse_text.setText("");
-                FetchData();
+                ClearFields();
             }
-            else{
-                JOptionPane.showMessageDialog(this, "No record to delete");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
+            
+        } catch (Exception ex) {
+              JOptionPane.showMessageDialog(this, "No selected record to delete!");
         }
+        FetchData();
     }//GEN-LAST:event_del_btnActionPerformed
 
     private void export_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_export_btnActionPerformed
@@ -399,28 +392,57 @@ public class mainPanel extends javax.swing.JFrame {
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         
-        DefaultTableModel tbl_model = (DefaultTableModel)jTable1.getModel();
+        try {
+        DefaultTableModel tbl_model = (DefaultTableModel) jTable1.getModel();
+        
         int selectedRow = jTable1.getSelectedRow();
+
+        if (selectedRow != -1) {
         
         sname_text.setText(tbl_model.getValueAt(selectedRow,1).toString());
         snumber_text.setText(tbl_model.getValueAt(selectedRow,0).toString());
         scourse_text.setText(tbl_model.getValueAt(selectedRow,2).toString());
+        
+//        System.out.println("SELECTED ROW: " + selectedRow);
+//        System.out.println("SELECTED NAME: " + sname_text.getText());
+//        System.out.println("SELECTED ID: " + snumber_text.getText());
+//        System.out.println("SELECTED COURSE: " + scourse_text.getText());
+
+        }
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this, "No row Selected!!!");
+    }
     }//GEN-LAST:event_jTable1MouseClicked
 
-    private void student_idKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_student_idKeyReleased
+    private void search_barKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_search_barKeyReleased
+
+        try {
+            String searchValue = search_bar.getText();
+            ps = conn.prepareStatement("SELECT * FROM tbl_student WHERE student_name LIKE ? OR student_course LIKE ? OR CAST(student_id AS TEXT) LIKE ?");
+            ps.setString(1, "%" + searchValue + "%");
+            ps.setString(2, "%" + searchValue + "%");
+            ps.setString(3, "%" + searchValue + "%");
+            res = ps.executeQuery();
+            
+            DefaultTableModel mod = (DefaultTableModel)jTable1.getModel();
+            mod.setRowCount(0);
+            
+            while(res.next()){
+                Object[] rowData = {res.getInt("student_id"), res.getString("student_name"), res.getString("student_course")};
+                mod.addRow(rowData);
+            }
+            TableRowSorter<DefaultTableModel> obj = new TableRowSorter<>(mod);           
+            jTable1.setRowSorter(obj);
         
-        DefaultTableModel mod = (DefaultTableModel)jTable1.getModel();
-        TableRowSorter<DefaultTableModel> obj = new TableRowSorter<>(mod);
-        jTable1.setRowSorter(obj);
-        obj.setRowFilter(RowFilter.regexFilter(student_id.getText()));
-    }//GEN-LAST:event_student_idKeyReleased
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "There's Nothing to Search!");
+        }
+    }//GEN-LAST:event_search_barKeyReleased
 
     private void clear_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clear_btnActionPerformed
         // TODO add your handling code here:
-        sname_text.setText("");
-        snumber_text.setText("");
-        scourse_text.setText("");
-        student_id.setText("");
+        ClearFields();
+        FetchData();
     }//GEN-LAST:event_clear_btnActionPerformed
 
     /**
@@ -480,8 +502,33 @@ public class mainPanel extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField scourse_text;
+    private javax.swing.JTextField search_bar;
     private javax.swing.JTextField sname_text;
     private javax.swing.JTextField snumber_text;
-    private javax.swing.JTextField student_id;
     // End of variables declaration//GEN-END:variables
 }
+
+
+//try {
+//            String searchValue = search_bar.getText();
+//            ps = conn.prepareStatement("SELECT * FROM tbl_student WHERE student_name LIKE ? OR student_course LIKE ? OR CAST(student_id AS TEXT) LIKE ?");
+//            ps.setString(1, "%" + searchValue + "%");
+//            ps.setString(2, "%" + searchValue + "%");
+//            ps.setString(3, "%" + searchValue + "%");
+//            res = ps.executeQuery();
+//
+//            DefaultTableModel mod = (DefaultTableModel) jTable1.getModel();
+//            mod.setRowCount(0); // Clear existing table data
+//
+//            while (res.next()) {
+//                Object[] rowData = { res.getInt("student_id"), res.getString("student_name"), res.getString("student_course") };
+//                mod.addRow(rowData);
+//            }
+//
+//            // Assuming this code is inside an event handler, you can update the row sorter and filter here as well.
+//            TableRowSorter<DefaultTableModel> obj = new TableRowSorter<>(mod);
+//            jTable1.setRowSorter(obj);
+//    
+//        } catch (Exception ex) {
+//            JOptionPane.showMessageDialog(this, "An error occurred: " + ex.getMessage());
+//        }

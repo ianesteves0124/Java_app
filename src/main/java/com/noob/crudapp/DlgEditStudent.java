@@ -28,9 +28,9 @@ public class DlgEditStudent extends javax.swing.JDialog {
             Class.forName("org.postgresql.Driver");
             conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Java_DB","postgres","stinggreen");
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(add_Student.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DlgEditStudent.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(add_Student.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DlgEditStudent.class.getName()).log(Level.SEVERE, null, ex);
         }   
     }
     
@@ -44,7 +44,7 @@ public class DlgEditStudent extends javax.swing.JDialog {
                 edit_scourse.addItem(res.getString(1));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(add_Student.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DlgEditStudent.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

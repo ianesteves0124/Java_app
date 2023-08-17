@@ -1,5 +1,7 @@
 package com.noob.crudapp;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -7,6 +9,7 @@ import java.sql.*;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
@@ -15,26 +18,37 @@ import javax.swing.table.TableRowSorter;
 
 public class mainPanel extends javax.swing.JFrame {
 
+    Connection conn;
+    PreparedStatement ps;
+    ResultSet res;
+    
     public mainPanel() {
         initComponents();
         Connect();
         FetchData();
+        
+        String[] Opts = {"Name", "Course", "ID"};
+        filter_comboBox.setModel(new DefaultComboBoxModel<>(Opts));
+        filter_comboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                filter_comboBoxActionPerformed(e);
+            }
+        });
+        
     }
-    
-    Connection conn;
-    PreparedStatement ps;
-    ResultSet res;
     
     public final void Connect (){
         try {
             Class.forName("org.postgresql.Driver");
             conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Java_DB","postgres","stinggreen");
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(add_Student.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(add_Student.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
         }   
     }
+    
 
    public void FetchData(){
         try {
@@ -85,6 +99,7 @@ public class mainPanel extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         search_bar = new javax.swing.JTextField();
         export_btn = new javax.swing.JButton();
+        filter_comboBox = new javax.swing.JComboBox<>();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -220,11 +235,14 @@ public class mainPanel extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 732, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 732, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -241,6 +259,13 @@ public class mainPanel extends javax.swing.JFrame {
         export_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 export_btnActionPerformed(evt);
+            }
+        });
+
+        filter_comboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        filter_comboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filter_comboBoxActionPerformed(evt);
             }
         });
 
@@ -280,27 +305,34 @@ public class mainPanel extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 16, Short.MAX_VALUE)
+                        .addGap(0, 4, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(export_btn)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(17, 17, 17))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(search_bar, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(17, 17, 17))
+                        .addComponent(search_bar, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(filter_comboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(search_bar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(search_bar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(filter_comboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -314,7 +346,9 @@ public class mainPanel extends javax.swing.JFrame {
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
-        new add_Student().show();
+        final DlgAddStudent dlg = new DlgAddStudent(null,true);
+        dlg.setLocationRelativeTo(null);
+        dlg.setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
@@ -365,6 +399,7 @@ public class mainPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_del_btnActionPerformed
 
     private void export_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_export_btnActionPerformed
+        
         String file = "/Users/nyok/Documents/ExportedFile.csv";
         
         try {
@@ -397,53 +432,58 @@ public class mainPanel extends javax.swing.JFrame {
         
         int selectedRow = jTable1.getSelectedRow();
 
-        if (selectedRow != -1) {
-        
-        sname_text.setText(tbl_model.getValueAt(selectedRow,1).toString());
-        snumber_text.setText(tbl_model.getValueAt(selectedRow,0).toString());
-        scourse_text.setText(tbl_model.getValueAt(selectedRow,2).toString());
-        
-//        System.out.println("SELECTED ROW: " + selectedRow);
-//        System.out.println("SELECTED NAME: " + sname_text.getText());
-//        System.out.println("SELECTED ID: " + snumber_text.getText());
-//        System.out.println("SELECTED COURSE: " + scourse_text.getText());
-
+            if (selectedRow != -1) {
+            sname_text.setText(tbl_model.getValueAt(selectedRow,1).toString());
+            snumber_text.setText(tbl_model.getValueAt(selectedRow,0).toString());
+            scourse_text.setText(tbl_model.getValueAt(selectedRow,2).toString());
+            }
+            
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "No row Selected!!!");
         }
-    } catch (Exception ex) {
-        JOptionPane.showMessageDialog(this, "No row Selected!!!");
-    }
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void search_barKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_search_barKeyReleased
-
+        
         try {
             String searchValue = search_bar.getText();
-            ps = conn.prepareStatement("SELECT * FROM tbl_student WHERE student_name LIKE ? OR student_course LIKE ? OR CAST(student_id AS TEXT) LIKE ?");
-            ps.setString(1, "%" + searchValue + "%");
-            ps.setString(2, "%" + searchValue + "%");
-            ps.setString(3, "%" + searchValue + "%");
-            res = ps.executeQuery();
-            
-            DefaultTableModel mod = (DefaultTableModel)jTable1.getModel();
-            mod.setRowCount(0);
-            
-            while(res.next()){
-                Object[] rowData = {res.getInt("student_id"), res.getString("student_name"), res.getString("student_course")};
-                mod.addRow(rowData);
+            String select_filter = (String) filter_comboBox.getSelectedItem();
+            String query_type = "";
+
+            if (select_filter.equals("ID")) {
+                query_type = "SELECT * FROM tbl_student WHERE CAST (student_id AS TEXT) LIKE ?";
+            }else if(select_filter.equals("Name")){
+                query_type = "SELECT * FROM tbl_student WHERE student_name LIKE ?";            
+            }else if(select_filter.equals("Course")){
+                query_type = "SELECT * FROM tbl_student WHERE student_course LIKE ?";
             }
-            TableRowSorter<DefaultTableModel> obj = new TableRowSorter<>(mod);           
-            jTable1.setRowSorter(obj);
-        
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "There's Nothing to Search!");
+            ps = conn.prepareStatement(query_type);
+            ps.setString(1, "%" + searchValue + "%");
+
+            res = ps.executeQuery();
+
+            DefaultTableModel mod = (DefaultTableModel) jTable1.getModel();
+            mod.setRowCount(0);
+
+            while(res.next()){
+                mod.addRow(new String[] {res.getString(1),res.getString(2),res.getString(3)});
+            }
+
+            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(mod);
+            jTable1.setRowSorter(sorter);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
     }//GEN-LAST:event_search_barKeyReleased
 
     private void clear_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clear_btnActionPerformed
-        // TODO add your handling code here:
         ClearFields();
         FetchData();
     }//GEN-LAST:event_clear_btnActionPerformed
+
+    private void filter_comboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filter_comboBoxActionPerformed
+        search_barKeyReleased(null);
+    }//GEN-LAST:event_filter_comboBoxActionPerformed
 
     /**
      * @param args the command line arguments
@@ -456,7 +496,7 @@ public class mainPanel extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Mac OS X".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -485,6 +525,7 @@ public class mainPanel extends javax.swing.JFrame {
     private javax.swing.JButton del_btn;
     private javax.swing.JButton edit_btn;
     private javax.swing.JButton export_btn;
+    private javax.swing.JComboBox<String> filter_comboBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -507,28 +548,3 @@ public class mainPanel extends javax.swing.JFrame {
     private javax.swing.JTextField snumber_text;
     // End of variables declaration//GEN-END:variables
 }
-
-
-//try {
-//            String searchValue = search_bar.getText();
-//            ps = conn.prepareStatement("SELECT * FROM tbl_student WHERE student_name LIKE ? OR student_course LIKE ? OR CAST(student_id AS TEXT) LIKE ?");
-//            ps.setString(1, "%" + searchValue + "%");
-//            ps.setString(2, "%" + searchValue + "%");
-//            ps.setString(3, "%" + searchValue + "%");
-//            res = ps.executeQuery();
-//
-//            DefaultTableModel mod = (DefaultTableModel) jTable1.getModel();
-//            mod.setRowCount(0); // Clear existing table data
-//
-//            while (res.next()) {
-//                Object[] rowData = { res.getInt("student_id"), res.getString("student_name"), res.getString("student_course") };
-//                mod.addRow(rowData);
-//            }
-//
-//            // Assuming this code is inside an event handler, you can update the row sorter and filter here as well.
-//            TableRowSorter<DefaultTableModel> obj = new TableRowSorter<>(mod);
-//            jTable1.setRowSorter(obj);
-//    
-//        } catch (Exception ex) {
-//            JOptionPane.showMessageDialog(this, "An error occurred: " + ex.getMessage());
-//        }

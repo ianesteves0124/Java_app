@@ -349,6 +349,7 @@ public class mainPanel extends javax.swing.JFrame {
         final DlgAddStudent dlg = new DlgAddStudent(null,true);
         dlg.setLocationRelativeTo(null);
         dlg.setVisible(true);
+        FetchData();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
@@ -451,11 +452,11 @@ public class mainPanel extends javax.swing.JFrame {
             String query_type = "";
 
             if (select_filter.equals("ID")) {
-                query_type = "SELECT * FROM tbl_student WHERE CAST (student_id AS TEXT) LIKE ?";
+                query_type = "SELECT * FROM tbl_student WHERE student_id::text LIKE ?"; // CAST (student_id AS TEXT)
             }else if(select_filter.equals("Name")){
-                query_type = "SELECT * FROM tbl_student WHERE student_name LIKE ?";            
+                query_type = "SELECT * FROM tbl_student WHERE student_name ILIKE ?";            
             }else if(select_filter.equals("Course")){
-                query_type = "SELECT * FROM tbl_student WHERE student_course LIKE ?";
+                query_type = "SELECT * FROM tbl_student WHERE student_course ILIKE ?";
             }
             ps = conn.prepareStatement(query_type);
             ps.setString(1, "%" + searchValue + "%");

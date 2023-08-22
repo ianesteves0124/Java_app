@@ -1,15 +1,19 @@
 package com.noob.crudapp;
 
+import java.awt.*;
+import java.awt.image.*;
+import java.io.*;
 import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
+import java.util.logging.*;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 public class DlgAddStudent extends javax.swing.JDialog {
 
     Connection conn;
     PreparedStatement ps;
     ResultSet res;
+    String path2 = null;
     
     public DlgAddStudent(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -54,6 +58,8 @@ public class DlgAddStudent extends javax.swing.JDialog {
         jLabel3 = new javax.swing.JLabel();
         student_name = new javax.swing.JTextField();
         add_button = new javax.swing.JButton();
+        Addupload_photo = new javax.swing.JButton();
+        lblPhoto = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -81,33 +87,43 @@ public class DlgAddStudent extends javax.swing.JDialog {
             }
         });
 
+        Addupload_photo.setText("Upload Photo");
+        Addupload_photo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Addupload_photoActionPerformed(evt);
+            }
+        });
+
+        lblPhoto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(81, 81, 81)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(student_name)
-                            .addComponent(course_dsc, 0, 216, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(33, 33, 33))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(add_button)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
-                                .addComponent(exit_button)
-                                .addGap(39, 39, 39)))))
-                .addGap(103, 103, 103))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(student_name)
+                                    .addComponent(course_dsc, 0, 210, Short.MAX_VALUE))))
+                        .addGap(34, 34, 34)
+                        .addComponent(lblPhoto, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(38, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(add_button)
+                        .addGap(18, 18, 18)
+                        .addComponent(exit_button)
+                        .addGap(91, 91, 91)
+                        .addComponent(Addupload_photo)
+                        .addGap(52, 52, 52))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -118,15 +134,21 @@ public class DlgAddStudent extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(student_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(course_dsc))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(add_button)
-                    .addComponent(exit_button))
-                .addGap(20, 20, 20))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Addupload_photo)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(add_button)
+                        .addComponent(exit_button)))
+                .addGap(22, 22, 22))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addComponent(lblPhoto, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -137,23 +159,49 @@ public class DlgAddStudent extends javax.swing.JDialog {
     }//GEN-LAST:event_exit_buttonActionPerformed
 
     private void add_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_buttonActionPerformed
-        try {
-            String name = student_name.getText();
-            String selectedCourse = (String) course_dsc.getSelectedItem();
-            
-            ps = conn.prepareStatement("INSERT INTO tbl_student (student_name, student_course) VALUES (?,?) ");
-            ps.setString(1, name);
-            ps.setString(2, selectedCourse);
-            
-            if(ps.executeUpdate() == 1){
-                JOptionPane.showMessageDialog(this,"Student Record Added");
-            }else{
-                JOptionPane.showMessageDialog(this,"Invalid Details");
-            }
-        } catch (SQLException ex) {
+        String name = student_name.getText();
+        String selectedCourse = (String) course_dsc.getSelectedItem();
+        
+            try {
+                conn.setAutoCommit(false); // Disable auto-commit
+                ps = conn.prepareStatement("INSERT INTO tbl_student (student_name, student_course,student_picture) VALUES (?,?,?) ");
+                ps.setString(1, name);
+                ps.setString(2, selectedCourse);
+                InputStream inpt_str = new FileInputStream(new File(path2));
+                ps.setBinaryStream(3,inpt_str);
+
+                if(ps.executeUpdate() == 1){
+                    conn.commit(); // Commit the transaction
+                    JOptionPane.showMessageDialog(this,"Student Record Added");
+                    student_name.setText("");
+                    lblPhoto.setIcon(null);
+                }else{
+                    JOptionPane.showMessageDialog(this,"Invalid Details");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(DlgAddStudent.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (FileNotFoundException ex) {
             Logger.getLogger(DlgAddStudent.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_add_buttonActionPerformed
+
+    private void Addupload_photoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Addupload_photoActionPerformed
+        
+            JFileChooser choose = new JFileChooser();
+            choose.showOpenDialog(null);
+            File fl = choose.getSelectedFile();
+            String path = fl.getAbsolutePath();
+            
+        try {
+            BufferedImage bimg = ImageIO.read(new File(path));
+            Image img = bimg.getScaledInstance(145, 123, Image.SCALE_SMOOTH);
+            ImageIcon icon = new ImageIcon(img);
+            lblPhoto.setIcon(icon);
+            path2 = path;
+        } catch (IOException ex) {
+            Logger.getLogger(DlgAddStudent.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_Addupload_photoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -198,15 +246,14 @@ public class DlgAddStudent extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Addupload_photo;
     private javax.swing.JButton add_button;
     private javax.swing.JComboBox<String> course_dsc;
     private javax.swing.JButton exit_button;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel lblPhoto;
     private javax.swing.JTextField student_name;
     // End of variables declaration//GEN-END:variables
 }

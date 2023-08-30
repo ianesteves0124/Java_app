@@ -5,8 +5,8 @@ import java.awt.event.*;
 import java.awt.event.KeyEvent;
 import java.io.*;
 import java.sql.*;
-import java.util.Vector;
 import java.util.logging.*;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.*;
 
@@ -31,6 +31,12 @@ public class mainPanel extends javax.swing.JFrame {
             }
         });
         
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            jTable1MouseClicked(evt);
+        }
+    });
+        
     }
     
     public final void Connect (){
@@ -43,35 +49,43 @@ public class mainPanel extends javax.swing.JFrame {
             Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
         }   
     }
-    
 
-   public void FetchData(){
+    public void FetchData(){
+        
         try {
-            int x;
-            ps = conn.prepareStatement("SELECT * FROM tbl_student ORDER BY student_id ASC");
-            res = ps.executeQuery();
-            
-            DefaultTableModel model =(DefaultTableModel)jTable1.getModel();
-            model.setRowCount(0);
-            
-            while(res.next()){
-                model.addRow(new String[] {res.getString(1),res.getString(2),res.getString(3)});
-                
+        ps = conn.prepareStatement("SELECT * FROM tbl_student ORDER BY student_id ASC");
+        res = ps.executeQuery();
+
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0);
+
+            while (res.next()) {
+                byte[] student_pic = res.getBytes("student_picture");
+
+                ImageIcon img;
+
+                try {
+                    Image image = ImageIO.read(new ByteArrayInputStream(student_pic));
+                    img = new ImageIcon(image);
+                } catch (IOException ex) {
+                    img = new ImageIcon();
+                }
+
+                model.addRow(new Object[]{res.getString(1), res.getString(2),res.getString(3), img});
             }
             
         } catch (SQLException ex) {
             Logger.getLogger(mainPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
-       
    }
-   
+
     public void ClearFields(){
          search_bar.setText(null);
          sname_text.setText(null);
          snumber_text.setText(null);
          scourse_text.setText(null);
+         lbl_dispPhoto.setIcon(null);
     }
-    
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -201,23 +215,23 @@ public class mainPanel extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Student No.", "Student Name", "Course"
+                "Student No.", "Student Name", "Course", "Image"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
+        jTable1.getTableHeader().setReorderingAllowed(false);
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTable1MouseClicked(evt);
@@ -228,6 +242,7 @@ public class mainPanel extends javax.swing.JFrame {
             jTable1.getColumnModel().getColumn(0).setResizable(false);
             jTable1.getColumnModel().getColumn(1).setResizable(false);
             jTable1.getColumnModel().getColumn(2).setResizable(false);
+            jTable1.getColumnModel().getColumn(3).setResizable(false);
         }
 
         export_btn.setText("Export");
@@ -380,7 +395,7 @@ public class mainPanel extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
-
+ 
     private void edit_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_btnActionPerformed
        
         try {
@@ -451,22 +466,23 @@ public class mainPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_export_btnActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
-        
-        try {
-        DefaultTableModel tbl_model = (DefaultTableModel) jTable1.getModel();
-        
         int selectedRow = jTable1.getSelectedRow();
-
-            if (selectedRow != -1) {
-            sname_text.setText(tbl_model.getValueAt(selectedRow,1).toString());
-            snumber_text.setText(tbl_model.getValueAt(selectedRow,0).toString());
-            scourse_text.setText(tbl_model.getValueAt(selectedRow,2).toString());
-            }
-            
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "No row Selected!!!");
-        }
         
+        DefaultTableModel tbl_model = (DefaultTableModel) jTable1.getModel();
+
+        if (selectedRow != -1) {
+            sname_text.setText(tbl_model.getValueAt(selectedRow, 1).toString());
+            snumber_text.setText(tbl_model.getValueAt(selectedRow, 0).toString());
+            scourse_text.setText(tbl_model.getValueAt(selectedRow, 2).toString());
+            
+            ImageIcon selectedImageIcon = (ImageIcon) tbl_model.getValueAt(selectedRow, 3);
+            Image selectedImage = selectedImageIcon.getImage();
+            Image scaledImage = selectedImage.getScaledInstance(lbl_dispPhoto.getWidth(), lbl_dispPhoto.getHeight(), Image.SCALE_SMOOTH);
+
+            ImageIcon resizedImageIcon = new ImageIcon(scaledImage);
+            lbl_dispPhoto.setIcon(resizedImageIcon);
+            lbl_dispPhoto.setText(null);
+           }
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void search_barKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_search_barKeyReleased
@@ -577,3 +593,4 @@ public class mainPanel extends javax.swing.JFrame {
     private javax.swing.JTextField snumber_text;
     // End of variables declaration//GEN-END:variables
 }
+

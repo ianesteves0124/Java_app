@@ -1,12 +1,12 @@
 package com.noob.crudapp;
 import com.sun.glass.events.KeyEvent;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import javax.swing.JOptionPane;
 
 public class loginForm extends javax.swing.JFrame {
+    
+    private static final String Java_DB = "postgres";
+    private int volume = 0;
 
     public loginForm() 
     {
@@ -106,7 +106,7 @@ public class loginForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void login_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_login_btnActionPerformed
-   
+        
         String uname = user_text.getText();
         String pass = password_text.getText();
         

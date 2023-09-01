@@ -22,6 +22,8 @@ public class DB {
             case "postgres":
             try{
                 conn = DriverManager.getConnection(DB_URL + Java_DB,DB_USER_NAME,DB_PASSWORD);
+                retValue = true;
+                return retValue;
             }catch(SQLException e){
                 System.err.println(e);
                 retValue = false;

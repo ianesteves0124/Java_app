@@ -61,7 +61,7 @@ public class mainPanel extends javax.swing.JFrame {
 
             while (res.next()) {
                 byte[] student_pic = res.getBytes("student_picture");
-
+ 
                 ImageIcon img;
 
                 try {
